@@ -1,12 +1,15 @@
 // import react native
 import React from 'react';
-import {View} from 'react-native';
+import {View, TextInput, NativeModules, Button} from 'react-native';
+
+const PDF_FILE_PATH = NativeModules.HtmlToPdf.PDF_FILE_PATH;
 
 // import webview
 import {WebView} from 'react-native-webview';
 
 export default function App() {
   const jsScript = `
+    document.body.style.backgroundColor = 'blue';
     document.getElementById("paragraphs").style.backgroundColor = "lightblue";
     true;
   `;
@@ -24,6 +27,7 @@ export default function App() {
       <h1 style="color: rgb(153, 0, 255); align-self: center">Hello, World!</h1>
     </div>
     <div
+      id="paragraphs"
       style="
         justify-content: center;
         align-items: center;
@@ -43,12 +47,23 @@ export default function App() {
         nisi repellendus voluptate laborum.
       </p>
     </div>
+    <script>
+      setTimeout(function () {
+        window.print();
+        window.ReactNativeWebView.postMessage('Hello!');
+      }, 2000);
+    </script>
   </body>
 </html>
 
   `;
+  const convertHandler = () => {
+    NativeModules.HtmlToPdf.convertHtmlToPdf(html);
+  };
   return (
     <View style={{flex: 1}}>
+      <TextInput value={PDF_FILE_PATH} />
+      <Button title="Convert" onPress={convertHandler} />
       <WebView
         style={{
           flex: 1,
@@ -57,7 +72,10 @@ export default function App() {
         }}
         originWhitelist={['*']}
         source={{html: html}}
-        injectedJavaScript={jsScript}
+        // injectedJavaScript={jsScript}
+        // onMessage={event => {
+        //   alert(event.nativeEvent.data);
+        // }}
       />
     </View>
   );
