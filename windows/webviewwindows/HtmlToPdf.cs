@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,8 +25,7 @@ namespace webviewwindows
                 {
                     ColorMode = ColorMode.Grayscale,
                     Orientation = Orientation.Portrait,
-                    PaperSize = PaperKind.A4Plus,
-                    Out = PdfFilePath
+                    PaperSize = PaperKind.LetterSmall,
                 },
                 Objects =
                 {
@@ -38,6 +38,9 @@ namespace webviewwindows
                 }
             };
             byte[] pdf = converter.Convert(doc);
+            var fileStream = new FileStream(PdfFilePath, FileMode.OpenOrCreate);
+            fileStream.WriteAsync(pdf, 0, pdf.Length);
+            fileStream.Close();
         }
     }
 }
